@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model Store {
+  Id             String   @id @default(cuid())
+  Name           String
+  OwnerName      String
+  WhatsappNumber String
+  CampusLocation String
+  IsOpen         Boolean  @default(true)
+  CreatedAt      DateTime @default(now())
+
+  Products Product[]
+  Orders   Order[]
+}
+
+model Category {
+  Id        String   @id @default(cuid())
+  Name      String
+  CreatedAt DateTime @default(now())
+
+  Products Product[]
+}
+
+model Product {
+  Id          String   @id @default(cuid())
+  StoreId     String
+  CategoryId  String
+  Name        String
+  Description String   @db.Text
+  Price       Int
+  ImageUrl    String
+  IsAvailable Boolean  @default(true)
+  CreatedAt   DateTime @default(now())
+
+  Store      Store       @relation(fields: [StoreId], references: [Id], onDelete: Cascade)
+  Category   Category    @relation(fields: [CategoryId], references: [Id])
+  OrderItems OrderItem[]
+
+  @@index([StoreId])
+  @@index([CategoryId])
+}
+
+model Order {
+  Id               String      @id @default(cuid())
+  StoreId          String
+  CustomerName     String
+  CustomerWhatsapp String
+  DeliveryLocation String
+  Notes            String      @db.Text
+  TotalPrice       Int
+  Status           OrderStatus @default(PENDING)
+  CreatedAt        DateTime    @default(now())
+
+  Store Store       @relation(fields: [StoreId], references: [Id], onDelete: Cascade)
+  Items OrderItem[]
+
+  @@index([StoreId])
+}
+
+model OrderItem {
+  Id        String @id @default(cuid())
+  OrderId   String
+  ProductId String
+  Quantity  Int
+  UnitPrice Int
+  Subtotal  Int
+
+  Order   Order   @relation(fields: [OrderId], references: [Id], onDelete: Cascade)
+  Product Product @relation(fields: [ProductId], references: [Id])
+
+  @@index([OrderId])
+  @@index([ProductId])
+}

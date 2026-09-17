@@ -1,0 +1,23 @@
+{
+  "name": "kampus-bite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KampusBite - Campus Food & Snack Hub",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build --workspace @kampus-bite/shared",
+    "dev:api": "npm run dev --workspace @kampus-bite/api",
+    "dev:web": "npm run dev --workspace @kampus-bite/web",
+    "dev": "npm run build:shared && concurrently -n API,WEB -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "prisma:migrate": "npm run prisma:migrate --workspace @kampus-bite/api",
+    "prisma:seed": "npm run prisma:seed --workspace @kampus-bite/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
