@@ -19,7 +19,7 @@ lewat WhatsApp.
 kampus-bite/
 ├── apps/
 │   ├── api/            # REST API (Express + Prisma)
-│   └── web/            # Frontend (React + Vite + Tailwind)
+│   └── web/            # Frontend (HTML + CSS + JavaScript, dev server Vite)
 ├── packages/
 │   └── shared/         # Domain models, enums, DTOs, konstanta bersama
 ├── docker-compose.yml  # MySQL
@@ -27,7 +27,6 @@ kampus-bite/
 ```
 
 Tipe data bersama berada di `@kampus-bite/shared` dan dipakai oleh `api` maupun `web`.
-Frontend tidak pernah mengimpor tipe Prisma secara langsung.
 
 ## Prasyarat
 
@@ -111,14 +110,13 @@ Dari root:
 npm run dev
 ```
 
-Perintah ini akan build package `shared`, lalu menjalankan API dan Web bersamaan.
+Perintah ini menjalankan API dan Web bersamaan.
 
 ### Menjalankan terpisah
 
 Backend (Express, default `http://localhost:4000`):
 
 ```bash
-npm run build:shared
 npm run dev:api
 ```
 
@@ -159,16 +157,15 @@ Filter produk: `/products?StoreId=...&CategoryId=...&IsAvailable=true`
 
 ## Skrip npm (root)
 
-| Skrip                    | Fungsi                                        |
-| ------------------------ | --------------------------------------------- |
-| `npm run dev`            | Build shared + jalankan API dan Web bersamaan |
-| `npm run dev:api`        | Jalankan API saja                             |
-| `npm run dev:web`        | Jalankan Web saja                             |
-| `npm run build:shared`   | Build package `shared`                        |
-| `npm run db:up`          | `docker compose up -d`                        |
-| `npm run db:down`        | `docker compose down`                         |
-| `npm run prisma:migrate` | Migrasi database                              |
-| `npm run prisma:seed`    | Seed data contoh                              |
+| Skrip                    | Fungsi                         |
+| ------------------------ | ------------------------------ |
+| `npm run dev`            | Jalankan API dan Web bersamaan |
+| `npm run dev:api`        | Jalankan API saja              |
+| `npm run dev:web`        | Jalankan Web saja              |
+| `npm run db:up`          | `docker compose up -d`         |
+| `npm run db:down`        | `docker compose down`          |
+| `npm run prisma:migrate` | Migrasi database               |
+| `npm run prisma:seed`    | Seed data contoh               |
 
 ## Alur WhatsApp
 
