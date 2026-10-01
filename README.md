@@ -7,7 +7,7 @@ lewat WhatsApp.
 
 ## Teknologi
 
-- **Frontend:** React + TypeScript + Vite + Tailwind CSS
+- **Frontend:** HTML + CSS + JavaScript murni (ESM, dev server Vite)
 - **Backend:** Node.js + JavaScript (ESM) + Express
 - **Database:** MySQL (via Docker Compose)
 - **ORM:** Prisma
