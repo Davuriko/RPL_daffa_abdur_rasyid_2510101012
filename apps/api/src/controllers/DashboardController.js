@@ -1,11 +1,4 @@
-import {
-  ActiveOrderStatuses,
-  DashboardResponse,
-  Order,
-  OrderStatus,
-  Store,
-} from "@kampus-bite/shared";
-import { OrderStatus as PrismaOrderStatus } from "@prisma/client";
+import { ActiveOrderStatuses, OrderStatus } from "@kampus-bite/shared";
 import { AsyncHandler } from "../middleware/AsyncHandler.js";
 import { HttpError } from "../utils/HttpError.js";
 import { prisma } from "../prisma.js";
@@ -15,8 +8,8 @@ export const GetDashboard = AsyncHandler(async (req, res) => {
   const store = await prisma.store.findUnique({ where: { Id: storeId } });
   if (!store) throw new HttpError(404, "Toko tidak ditemukan.");
 
-  const activeStatuses = ActiveOrderStatuses as unknown as PrismaOrderStatus[];
-  const completedStatus = OrderStatus.Completed as unknown as PrismaOrderStatus;
+  const activeStatuses = ActiveOrderStatuses;
+  const completedStatus = OrderStatus.Completed;
 
   const [salesAggregate, activeOrders, totalMenu, recentOrders] =
     await Promise.all([
@@ -36,12 +29,11 @@ export const GetDashboard = AsyncHandler(async (req, res) => {
       }),
     ]);
 
-  const response: DashboardResponse = {
-    Store: store as unknown as Store,
+  res.json({
+    Store: store,
     TotalSales: salesAggregate._sum.TotalPrice ?? 0,
     ActiveOrders: activeOrders,
     TotalMenu: totalMenu,
-    RecentOrders: recentOrders as unknown as Order[],
-  };
-  res.json(response);
+    RecentOrders: recentOrders,
+  });
 });

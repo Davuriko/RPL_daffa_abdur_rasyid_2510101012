@@ -8,7 +8,7 @@ lewat WhatsApp.
 ## Teknologi
 
 - **Frontend:** React + TypeScript + Vite + Tailwind CSS
-- **Backend:** Node.js + TypeScript + Express
+- **Backend:** Node.js + JavaScript (ESM) + Express
 - **Database:** MySQL (via Docker Compose)
 - **ORM:** Prisma
 - **Monorepo:** npm workspaces

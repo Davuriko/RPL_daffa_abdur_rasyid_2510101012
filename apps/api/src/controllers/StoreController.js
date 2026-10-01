@@ -1,4 +1,3 @@
-import { CreateStoreRequest, UpdateStoreRequest } from "@kampus-bite/shared";
 import { AsyncHandler } from "../middleware/AsyncHandler.js";
 import { HttpError } from "../utils/HttpError.js";
 import { prisma } from "../prisma.js";
@@ -15,7 +14,7 @@ export const GetStore = AsyncHandler(async (req, res) => {
 });
 
 export const CreateStore = AsyncHandler(async (req, res) => {
-  const body = req.body as CreateStoreRequest;
+  const body = req.body;
   if (
     !body.Name ||
     !body.OwnerName ||
@@ -38,7 +37,7 @@ export const CreateStore = AsyncHandler(async (req, res) => {
 });
 
 export const UpdateStore = AsyncHandler(async (req, res) => {
-  const body = req.body as UpdateStoreRequest;
+  const body = req.body;
   const existing = await prisma.store.findUnique({
     where: { Id: req.params.Id },
   });

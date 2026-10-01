@@ -1,15 +1,10 @@
-import { Prisma } from "@prisma/client";
-import {
-  CreateProductRequest,
-  UpdateProductRequest,
-} from "@kampus-bite/shared";
 import { AsyncHandler } from "../middleware/AsyncHandler.js";
 import { HttpError } from "../utils/HttpError.js";
 import { prisma } from "../prisma.js";
 
 export const GetProducts = AsyncHandler(async (req, res) => {
   const { StoreId, CategoryId, IsAvailable } = req.query;
-  const where: Prisma.ProductWhereInput = {};
+  const where = {};
 
   if (typeof StoreId === "string") where.StoreId = StoreId;
   if (typeof CategoryId === "string") where.CategoryId = CategoryId;
@@ -34,7 +29,7 @@ export const GetProduct = AsyncHandler(async (req, res) => {
 });
 
 export const CreateProduct = AsyncHandler(async (req, res) => {
-  const body = req.body as CreateProductRequest;
+  const body = req.body;
   if (
     !body.StoreId ||
     !body.CategoryId ||
@@ -61,7 +56,7 @@ export const CreateProduct = AsyncHandler(async (req, res) => {
 });
 
 export const UpdateProduct = AsyncHandler(async (req, res) => {
-  const body = req.body as UpdateProductRequest;
+  const body = req.body;
   const existing = await prisma.product.findUnique({
     where: { Id: req.params.Id },
   });

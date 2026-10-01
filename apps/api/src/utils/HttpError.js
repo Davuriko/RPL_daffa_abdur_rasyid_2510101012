@@ -1,7 +1,5 @@
 export class HttpError extends Error {
-  StatusCode: number;
-
-  constructor(statusCode: number, message: string) {
+  constructor(statusCode, message) {
     super(message);
     this.StatusCode = statusCode;
   }

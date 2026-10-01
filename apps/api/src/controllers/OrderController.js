@@ -1,23 +1,14 @@
-import { OrderStatus as PrismaOrderStatus, Prisma } from "@prisma/client";
 import {
   BuildWhatsappUrl,
-  CreateOrderRequest,
-  CreateOrderResponse,
   FormatRupiah,
   NormalizeWhatsapp,
-  Order,
   OrderStatus,
-  UpdateOrderStatusRequest,
 } from "@kampus-bite/shared";
 import { AsyncHandler } from "../middleware/AsyncHandler.js";
 import { HttpError } from "../utils/HttpError.js";
 import { prisma } from "../prisma.js";
 
-type OrderWithDetails = Prisma.OrderGetPayload<{
-  include: { Items: { include: { Product: true } }; Store: true };
-}>;
-
-function BuildOrderMessage(order: OrderWithDetails): string {
+function BuildOrderMessage(order) {
   const itemLines = order.Items.map(
     (item) =>
       `- ${item.Quantity}x ${item.Product.Name} (${FormatRupiah(item.UnitPrice)}) = ${FormatRupiah(item.Subtotal)}`,
@@ -44,7 +35,7 @@ function BuildOrderMessage(order: OrderWithDetails): string {
 }
 
 export const CreateOrder = AsyncHandler(async (req, res) => {
-  const body = req.body as CreateOrderRequest;
+  const body = req.body;
   if (
     !body.StoreId ||
     !body.CustomerName ||
@@ -110,11 +101,7 @@ export const CreateOrder = AsyncHandler(async (req, res) => {
     store.WhatsappNumber,
     BuildOrderMessage(order),
   );
-  const response: CreateOrderResponse = {
-    Order: order as unknown as Order,
-    WhatsappUrl: whatsappUrl,
-  };
-  res.status(201).json(response);
+  res.status(201).json({ Order: order, WhatsappUrl: whatsappUrl });
 });
 
 export const GetStoreOrders = AsyncHandler(async (req, res) => {
@@ -153,7 +140,7 @@ export const GetCustomerOrders = AsyncHandler(async (req, res) => {
 });
 
 export const UpdateOrderStatus = AsyncHandler(async (req, res) => {
-  const body = req.body as UpdateOrderStatusRequest;
+  const body = req.body;
   const validStatuses = Object.values(OrderStatus);
   if (!body.Status || !validStatuses.includes(body.Status)) {
     throw new HttpError(400, "Status pesanan tidak valid.");
@@ -166,7 +153,7 @@ export const UpdateOrderStatus = AsyncHandler(async (req, res) => {
 
   const order = await prisma.order.update({
     where: { Id: req.params.Id },
-    data: { Status: body.Status as unknown as PrismaOrderStatus },
+    data: { Status: body.Status },
     include: { Items: { include: { Product: true } }, Store: true },
   });
   res.json(order);
