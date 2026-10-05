@@ -1,6 +1,12 @@
-import { OrderStatus } from "./Enums.js";
+import { OrderStatus, Role } from "./Enums.js";
 
 export const CurrencyLocale = "id-ID";
+
+export const RoleLabels = {
+  [Role.Admin]: "Admin",
+  [Role.Seller]: "Penjual",
+  [Role.Buyer]: "Pembeli",
+};
 
 export const OrderStatusLabels = {
   [OrderStatus.Pending]: "Menunggu Konfirmasi",

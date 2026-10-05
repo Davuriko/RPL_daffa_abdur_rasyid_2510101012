@@ -1064,3 +1064,62 @@ img {
   min-height: 100vh;
   padding-bottom: 2.5rem;
 }
+
+/* Auth area in topbar */
+.auth-area {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #fff;
+}
+
+.auth-user {
+  font-weight: 600;
+}
+
+.auth-user small {
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.btn-auth {
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+
+.btn-auth:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Data table (admin) */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 0.5rem 0.625rem;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.data-table th {
+  font-weight: 600;
+  color: var(--slate-500);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+

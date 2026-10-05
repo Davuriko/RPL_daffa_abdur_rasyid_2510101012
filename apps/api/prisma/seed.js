@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
@@ -8,24 +9,72 @@ async function Main() {
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
   await prisma.store.deleteMany();
+  await prisma.user.deleteMany();
+
+  const [adminHash, melatiHash, bagusHash, buyerHash] = await Promise.all([
+    bcrypt.hash("admin123", 10),
+    bcrypt.hash("seller123", 10),
+    bcrypt.hash("seller123", 10),
+    bcrypt.hash("buyer123", 10),
+  ]);
+
+  await prisma.user.create({
+    data: {
+      Name: "Admin KampusBite",
+      Email: "admin@kampusbite.id",
+      PasswordHash: adminHash,
+      Role: "ADMIN",
+    },
+  });
+
+  const melatiSeller = await prisma.user.create({
+    data: {
+      Name: "Melati Andini",
+      Email: "melati@kampusbite.id",
+      PasswordHash: melatiHash,
+      Role: "SELLER",
+    },
+  });
+
+  const bagusSeller = await prisma.user.create({
+    data: {
+      Name: "Bagus Pratama",
+      Email: "bagus@kampusbite.id",
+      PasswordHash: bagusHash,
+      Role: "SELLER",
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      Name: "Rina Kusuma",
+      Email: "rina@kampusbite.id",
+      PasswordHash: buyerHash,
+      Role: "BUYER",
+    },
+  });
 
   const melati = await prisma.store.create({
     data: {
+      SellerId: melatiSeller.Id,
       Name: "Dapur Kost Melati",
       OwnerName: "Melati Andini",
       WhatsappNumber: "6281234567890",
       CampusLocation: "Gedung Fasilkom lt. 2",
       IsOpen: true,
+      IsVerified: true,
     },
   });
 
   const risol = await prisma.store.create({
     data: {
+      SellerId: bagusSeller.Id,
       Name: "Risol Mayo Kampus",
       OwnerName: "Bagus Pratama",
       WhatsappNumber: "6289876543210",
       CampusLocation: "Kantin Teknik",
       IsOpen: true,
+      IsVerified: true,
     },
   });
 
@@ -160,7 +209,9 @@ async function Main() {
     },
   });
 
-  console.log("Seed selesai: 2 toko, 4 kategori, 6 produk, 2 pesanan.");
+  console.log(
+    "Seed selesai: 4 pengguna, 2 toko, 4 kategori, 6 produk, 2 pesanan.",
+  );
 }
 
 Main()

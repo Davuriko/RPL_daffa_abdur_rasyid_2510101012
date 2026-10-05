@@ -15,17 +15,39 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum Role {
+  ADMIN
+  SELLER
+  BUYER
+}
+
+model User {
+  Id           String   @id @default(cuid())
+  Name         String
+  Email        String   @unique
+  PasswordHash String
+  Role         Role     @default(BUYER)
+  CreatedAt    DateTime @default(now())
+
+  Stores Store[]
+}
+
 model Store {
   Id             String   @id @default(cuid())
+  SellerId       String?
   Name           String
   OwnerName      String
   WhatsappNumber String
   CampusLocation String
   IsOpen         Boolean  @default(true)
+  IsVerified     Boolean  @default(false)
   CreatedAt      DateTime @default(now())
 
+  Seller   User?     @relation(fields: [SellerId], references: [Id], onDelete: SetNull)
   Products Product[]
   Orders   Order[]
+
+  @@index([SellerId])
 }
 
 model Category {

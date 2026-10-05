@@ -31,6 +31,7 @@ export const CreateStore = AsyncHandler(async (req, res) => {
       WhatsappNumber: body.WhatsappNumber,
       CampusLocation: body.CampusLocation,
       IsOpen: body.IsOpen ?? true,
+      SellerId: body.SellerId ?? null,
     },
   });
   res.status(201).json(store);

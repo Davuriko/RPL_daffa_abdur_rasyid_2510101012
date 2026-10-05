@@ -5,3 +5,9 @@ export const OrderStatus = Object.freeze({
   Completed: "COMPLETED",
   Cancelled: "CANCELLED",
 });
+
+export const Role = Object.freeze({
+  Admin: "ADMIN",
+  Seller: "SELLER",
+  Buyer: "BUYER",
+});

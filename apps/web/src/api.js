@@ -1,8 +1,15 @@
 const BaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api";
 
+export const TokenKey = "kampusbite_token";
+
+function AuthHeaders() {
+  const token = localStorage.getItem(TokenKey);
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 async function Request(path, options) {
   const response = await fetch(`${BaseUrl}${path}`, {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...AuthHeaders() },
     ...options,
   });
 
@@ -28,6 +35,21 @@ function BuildProductQuery(filter) {
 }
 
 export const ApiClient = {
+  Register: (body) =>
+    Request("/auth/register", { method: "POST", body: JSON.stringify(body) }),
+  Login: (body) =>
+    Request("/auth/login", { method: "POST", body: JSON.stringify(body) }),
+  Me: () => Request("/auth/me"),
+
+  GetAdminStats: () => Request("/admin/stats"),
+  GetAdminUsers: () => Request("/admin/users"),
+  GetAdminStores: () => Request("/admin/stores"),
+  SetStoreVerification: (id, isVerified) =>
+    Request(`/admin/stores/${id}/verification`, {
+      method: "PATCH",
+      body: JSON.stringify({ IsVerified: isVerified }),
+    }),
+
   GetStores: () => Request("/stores"),
   GetStore: (id) => Request(`/stores/${id}`),
   ToggleStore: (id) =>

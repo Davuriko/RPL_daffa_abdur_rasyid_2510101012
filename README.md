@@ -1,175 +1,57 @@
-# KampusBite — Campus Food & Snack Hub
+1. Deskripsi Masalah
+   Banyak mahasiswa yang memiliki keahlian memasak, membuat kue, atau meracik minuman rumahan/kossan ingin berjualan untuk menambah uang saku. Namun, mereka terkendala modal untuk membuka toko fisik, kesulitan memasarkan produk di luar jam kuliah, dan promosi di grup WhatsApp kampus seringkali tenggelam oleh informasi akademik. Di sisi lain, mahasiswa pembeli sering bingung mencari pilihan makanan halal, murah, dan dekat di dalam area kampus saat jam istirahat.
 
-Platform jual-beli makanan, camilan, dan minuman buatan mahasiswa di dalam kampus.
-Penjual bisa mendaftarkan toko, mengelola menu, dan memantau pesanan. Pembeli bisa
-menelusuri menu, menambah ke keranjang, checkout, lalu meneruskan pesanan ke penjual
-lewat WhatsApp.
+2. Profil Target Pengguna
+   Admin: Pengelola sistem kampus/organisasi mahasiswa yang bertugas memverifikasi toko, memantau aktivitas transaksi, dan mengelola data master kategori.
 
-## Teknologi
+Penjual (Mahasiswa): Mahasiswa yang ingin membuka lapak online kecil-kecilan untuk menjual makanan/minuman buatan sendiri ke sesama warga kampus.
 
-- **Frontend:** HTML + CSS + JavaScript murni (ESM, dev server Vite)
-- **Backend:** Node.js + JavaScript (ESM) + Express
-- **Database:** MySQL (via Docker Compose)
-- **ORM:** Prisma
-- **Monorepo:** npm workspaces
+Pembeli (Mahasiswa/Dosen): Pengguna kampus yang ingin mencari, memesan, dan membeli makanan praktis langsung dari sesama mahasiswa secara mudah.
 
-## Struktur Proyek
+3. Manfaat Aplikasi
+   Menjadi wadah digital terpusat (marketplace mikro) khusus civitas akademika.
 
-```
-kampus-bite/
-├── apps/
-│   ├── api/            # REST API (Express + Prisma)
-│   └── web/            # Frontend (HTML + CSS + JavaScript, dev server Vite)
-├── packages/
-│   └── shared/         # Domain models, enums, DTOs, konstanta bersama
-├── docker-compose.yml  # MySQL
-└── .env.example
-```
+Mempermudah transaksi langsung melalui alur keranjang belanja yang bermuara ke direct checkout via WhatsApp penjual.
 
-Tipe data bersama berada di `@kampus-bite/shared` dan dipakai oleh `api` maupun `web`.
+Membantu mahasiswa wirausaha (student-preneur) mengelola menu dan pesanan mereka dengan rapi.
 
-## Prasyarat
+4. Daftar Fitur Inti (Realistis untuk 12 Pertemuan)
+   Autentikasi & Role: Register/Login untuk 3 Role (Admin, Penjual, Pembeli) dengan enkripsi password dasar dan session/JWT sederhana.
 
-- Node.js 18+ dan npm 9+
-- Docker Desktop (untuk MySQL)
+Modul Admin:
 
-## 1. Instalasi Dependensi
+Dashboard statistik singkat (total pengguna, total toko aktif).
 
-Dari folder root proyek:
+Verifikasi/manajemen status toko penjual.
 
-```bash
-npm install
-```
+Modul Penjual:
 
-Salin file environment lalu sesuaikan bila perlu:
+Pendaftaran toko (nama toko, deskripsi, kontak WA).
 
-```bash
-cp .env.example .env
-cp apps/api/.env.example apps/api/.env
-cp apps/web/.env.example apps/web/.env
-```
+CRUD Menu Makanan/Minuman (nama, harga, kategori, status stok).
 
-> Di PowerShell gunakan `Copy-Item .env.example .env` (lakukan untuk tiap file).
+Manajemen status pesanan masuk.
 
-## 2. Menjalankan Database (Docker)
+Modul Pembeli:
 
-Jalankan MySQL memakai Docker Compose:
+Katalog menu dengan filter pencarian dan kategori.
 
-```bash
-docker compose up -d
-```
+Keranjang Belanja (Cart) lokal/session.
 
-Perintah lain yang berguna:
+Checkout pesanan otomatis yang menghasilkan format pesan WhatsApp terstruktur ke nomor penjual.
 
-```bash
-docker compose ps        # cek status kontainer
-docker compose logs -f   # lihat log MySQL
-docker compose down      # hentikan kontainer
-```
+5. Fitur yang Tidak Dikerjakan (Out of Scope)
+   Payment Gateway otomatis (Midtrans/Xendit) – diganti dengan sistem konfirmasi manual / chat WhatsApp.
 
-Konfigurasi default (lihat `docker-compose.yml`):
+Fitur Kurir/Ojek Internal Kampus – pengiriman diasumsikan diambil sendiri (Self-Pickup) atau diatur langsung via chat pembeli-penjual.
 
-- Host: `localhost:3306`
-- Database: `kampus_bite`
-- User / Password: `kampus` / `kampus`
+Notifikasi Push Real-time (WebSocket/Socket.io) – menggunakan polling/refresh sederhana.
 
-`DATABASE_URL` pada `apps/api/.env` sudah cocok dengan nilai di atas:
+6. Kriteria Keberhasilan Aplikasi
+   Ketiga role (Admin, Penjual, Pembeli) dapat melakukan registrasi, login, dan masuk ke halaman dashboard masing-masing sesuai hak akses.
 
-```
-DATABASE_URL="mysql://kampus:kampus@localhost:3306/kampus_bite"
-```
+Penjual berhasil menambahkan produk menu ke database MySQL.
 
-## 3. Migrasi & Seed Database (Prisma)
+Pembeli dapat memasukkan produk ke keranjang dan mengklik tombol checkout yang sukses mengarahkan teks pesanan ke WhatsApp penjual.
 
-Setelah MySQL berjalan, buat skema dan isi data contoh:
-
-```bash
-# Generate Prisma Client
-npm run prisma:generate --workspace @kampus-bite/api
-
-# Jalankan migrasi (membuat tabel di database)
-npm run prisma:migrate --workspace @kampus-bite/api
-
-# Isi data contoh (2 toko, 4 kategori, 6 produk, 2 pesanan)
-npm run prisma:seed --workspace @kampus-bite/api
-```
-
-Opsional, buka Prisma Studio untuk melihat data:
-
-```bash
-npm run prisma:studio --workspace @kampus-bite/api
-```
-
-## 4. Menjalankan Server
-
-### Cara cepat (backend + frontend sekaligus)
-
-Dari root:
-
-```bash
-npm run dev
-```
-
-Perintah ini menjalankan API dan Web bersamaan.
-
-### Menjalankan terpisah
-
-Backend (Express, default `http://localhost:4000`):
-
-```bash
-npm run dev:api
-```
-
-Frontend (Vite, default `http://localhost:5173`):
-
-```bash
-npm run dev:web
-```
-
-Buka `http://localhost:5173` di browser.
-
-- **Tampilan Pelanggan:** `http://localhost:5173/?view=customer`
-- **Dashboard Penjual:** `http://localhost:5173/?view=seller`
-
-## API Endpoints
-
-Base URL: `http://localhost:4000/api`
-
-| Method | Endpoint                     | Keterangan                    |
-| ------ | ---------------------------- | ----------------------------- |
-| GET    | `/stores`                    | Daftar toko                   |
-| GET    | `/stores/:Id`                | Detail toko                   |
-| POST   | `/stores`                    | Tambah toko                   |
-| PUT    | `/stores/:Id`                | Ubah toko                     |
-| PATCH  | `/stores/:Id/toggle-status`  | Buka/tutup toko               |
-| GET    | `/categories`                | Daftar kategori               |
-| GET    | `/products`                  | Daftar produk (filter query)  |
-| GET    | `/products/:Id`              | Detail produk                 |
-| POST   | `/products`                  | Tambah produk                 |
-| PUT    | `/products/:Id`              | Ubah produk                   |
-| DELETE | `/products/:Id`              | Hapus produk                  |
-| POST   | `/orders`                    | Buat pesanan (+ URL WhatsApp) |
-| GET    | `/stores/:StoreId/orders`    | Daftar pesanan toko           |
-| PATCH  | `/orders/:Id/status`         | Ubah status pesanan           |
-| GET    | `/stores/:StoreId/dashboard` | Ringkasan dashboard penjual   |
-
-Filter produk: `/products?StoreId=...&CategoryId=...&IsAvailable=true`
-
-## Skrip npm (root)
-
-| Skrip                    | Fungsi                         |
-| ------------------------ | ------------------------------ |
-| `npm run dev`            | Jalankan API dan Web bersamaan |
-| `npm run dev:api`        | Jalankan API saja              |
-| `npm run dev:web`        | Jalankan Web saja              |
-| `npm run db:up`          | `docker compose up -d`         |
-| `npm run db:down`        | `docker compose down`          |
-| `npm run prisma:migrate` | Migrasi database               |
-| `npm run prisma:seed`    | Seed data contoh               |
-
-## Alur WhatsApp
-
-Saat pembeli checkout, backend menghitung ulang total di sisi server (integritas
-harga), menyimpan `Order` beserta `OrderItem` secara transaksional, lalu mengembalikan
-URL siap kirim berformat `https://wa.me/<nomor_penjual>?text=...`. Pembeli menekan
-tombol "Kirim Pesanan ke WhatsApp Penjual" untuk meneruskan detail pesanan.
+Aplikasi berjalan di atas arsitektur Monorepo npm workspaces dengan Docker Compose untuk MySQL dan Prisma ORM.
