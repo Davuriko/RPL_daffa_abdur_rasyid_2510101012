@@ -55,3 +55,89 @@ Penjual berhasil menambahkan produk menu ke database MySQL.
 Pembeli dapat memasukkan produk ke keranjang dan mengklik tombol checkout yang sukses mengarahkan teks pesanan ke WhatsApp penjual.
 
 Aplikasi berjalan di atas arsitektur Monorepo npm workspaces dengan Docker Compose untuk MySQL dan Prisma ORM.
+
+---
+
+## 7. Cara Menjalankan Aplikasi (Development)
+
+### Prasyarat
+
+- **Node.js** v18 atau lebih baru (disarankan LTS)
+- **Docker Desktop** (untuk database MySQL)
+- **npm** v9+ (sudah termasuk saat install Node.js)
+
+### Langkah 1 — Install Dependency
+
+Dari folder root proyek (`KampusBite`), jalankan sekali:
+
+```powershell
+npm install
+```
+
+Perintah ini otomatis meng-install dependency untuk semua workspace (`api`, `web`, dan `shared`).
+
+### Langkah 2 — Siapkan File Environment
+
+Salin file contoh `.env.example` menjadi `.env`:
+
+```powershell
+Copy-Item .env.example .env
+Copy-Item apps\api\.env.example apps\api\.env
+Copy-Item apps\web\.env.example apps\web\.env
+```
+
+Nilai default sudah cocok untuk development lokal, jadi tidak perlu diubah.
+
+### Langkah 3 — Jalankan Database (MySQL via Docker)
+
+```powershell
+npm run db:up
+```
+
+Perintah ini menyalakan container MySQL di port `3306`. Pastikan Docker Desktop sudah berjalan.
+
+### Langkah 4 — Migrasi & Seed Database
+
+Buat tabel dan isi data contoh (akun demo, toko, produk):
+
+```powershell
+npm run prisma:migrate
+npm run prisma:seed
+```
+
+### Langkah 5 — Jalankan API + Web Sekaligus
+
+```powershell
+npm run dev
+```
+
+Setelah itu buka browser:
+
+- **Web (frontend):** http://localhost:5173
+- **API (backend):** http://localhost:4000
+
+> Ingin menjalankan terpisah? Gunakan `npm run dev:api` (hanya backend) atau `npm run dev:web` (hanya frontend) di dua terminal berbeda.
+
+### Akun Demo (hasil seed)
+
+| Role    | Email                | Password    |
+| ------- | -------------------- | ----------- |
+| Admin   | admin@kampusbite.id  | `admin123`  |
+| Penjual | melati@kampusbite.id | `seller123` |
+| Penjual | bagus@kampusbite.id  | `seller123` |
+| Pembeli | rina@kampusbite.id   | `buyer123`  |
+
+### Perintah Berguna Lainnya
+
+| Perintah              | Fungsi                       |
+| --------------------- | ---------------------------- |
+| `npm run db:down`     | Menghentikan container MySQL |
+| `npm run prisma:seed` | Mengisi ulang data contoh    |
+| `npm run dev:api`     | Menjalankan backend saja     |
+| `npm run dev:web`     | Menjalankan frontend saja    |
+
+### Troubleshooting Singkat
+
+- **Port 3306 sudah dipakai:** matikan service MySQL lokal (mis. XAMPP) sebelum `npm run db:up`.
+- **Web tidak bisa akses API / error koneksi:** pastikan API jalan di port `4000` dan `apps/web/.env` berisi `VITE_API_URL="http://localhost:4000/api"`.
+- **Error Prisma Client:** jalankan `npm run prisma:generate --workspace @kampus-bite/api` lalu ulangi.
