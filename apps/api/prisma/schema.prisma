@@ -34,7 +34,7 @@ model User {
 
 model Store {
   Id             String   @id @default(cuid())
-  SellerId       String?
+  SellerId       String?  @unique
   Name           String
   OwnerName      String
   WhatsappNumber String
@@ -46,8 +46,6 @@ model Store {
   Seller   User?     @relation(fields: [SellerId], references: [Id], onDelete: SetNull)
   Products Product[]
   Orders   Order[]
-
-  @@index([SellerId])
 }
 
 model Category {

@@ -7,6 +7,14 @@ export const GetStores = AsyncHandler(async (_req, res) => {
   res.json(stores);
 });
 
+export const GetMyStores = AsyncHandler(async (req, res) => {
+  const stores = await prisma.store.findMany({
+    where: { SellerId: req.User.Id },
+    orderBy: { CreatedAt: "asc" },
+  });
+  res.json(stores);
+});
+
 export const GetStore = AsyncHandler(async (req, res) => {
   const store = await prisma.store.findUnique({ where: { Id: req.params.Id } });
   if (!store) throw new HttpError(404, "Toko tidak ditemukan.");
@@ -24,6 +32,13 @@ export const CreateStore = AsyncHandler(async (req, res) => {
     throw new HttpError(400, "Data toko tidak lengkap.");
   }
 
+  const existingStore = await prisma.store.findFirst({
+    where: { SellerId: req.User.Id },
+  });
+  if (existingStore) {
+    throw new HttpError(409, "Setiap penjual hanya boleh memiliki satu toko.");
+  }
+
   const store = await prisma.store.create({
     data: {
       Name: body.Name,
@@ -31,7 +46,7 @@ export const CreateStore = AsyncHandler(async (req, res) => {
       WhatsappNumber: body.WhatsappNumber,
       CampusLocation: body.CampusLocation,
       IsOpen: body.IsOpen ?? true,
-      SellerId: body.SellerId ?? null,
+      SellerId: req.User.Id,
     },
   });
   res.status(201).json(store);

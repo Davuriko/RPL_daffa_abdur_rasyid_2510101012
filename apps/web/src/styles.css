@@ -702,6 +702,13 @@ img {
   color: var(--slate-500);
 }
 
+.seller-store-name {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
 .seg {
   display: flex;
   background: var(--slate-100);
@@ -1122,4 +1129,3 @@ img {
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
-

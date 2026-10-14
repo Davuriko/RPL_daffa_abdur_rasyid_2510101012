@@ -51,7 +51,10 @@ export const ApiClient = {
     }),
 
   GetStores: () => Request("/stores"),
+  GetMyStores: () => Request("/stores/mine"),
   GetStore: (id) => Request(`/stores/${id}`),
+  CreateStore: (body) =>
+    Request("/stores", { method: "POST", body: JSON.stringify(body) }),
   ToggleStore: (id) =>
     Request(`/stores/${id}/toggle-status`, { method: "PATCH" }),
 
