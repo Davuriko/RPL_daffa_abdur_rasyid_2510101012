@@ -1,6 +1,6 @@
 import { FormatRupiah } from "@kampus-bite/shared";
 import { ApiClient } from "../api.js";
-import { escapeHtml } from "../dom.js";
+import { escapeHtml, StarRatingDisplay } from "../dom.js";
 import { openProductFormModal } from "./productFormModal.js";
 
 export function renderManageMenu(container, storeId) {
@@ -49,6 +49,7 @@ export function renderManageMenu(container, storeId) {
           product.Category?.Name ?? "-",
         )}</td>
         <td class="price-cell">${FormatRupiah(product.Price)}</td>
+        <td>${StarRatingDisplay(product.RatingAverage, product.RatingCount)}</td>
         <td>
           <span class="status-pill ${product.IsAvailable ? "yes" : "no"}">${
             product.IsAvailable ? "Tersedia" : "Habis"
@@ -78,7 +79,7 @@ export function renderManageMenu(container, storeId) {
     } else {
       const rows =
         products.length === 0
-          ? `<tr><td colspan="5" class="center" style="padding:2rem 0;color:var(--slate-500)">Belum ada menu. Tambahkan menu pertama Anda.</td></tr>`
+          ? `<tr><td colspan="6" class="center" style="padding:2rem 0;color:var(--slate-500)">Belum ada menu. Tambahkan menu pertama Anda.</td></tr>`
           : products.map(rowHtml).join("");
       body = `
         <div class="table-scroll">
@@ -88,6 +89,7 @@ export function renderManageMenu(container, storeId) {
                 <th>Menu</th>
                 <th>Kategori</th>
                 <th>Harga</th>
+                <th>Rating</th>
                 <th>Status</th>
                 <th class="text-right">Aksi</th>
               </tr>

@@ -23,3 +23,32 @@ export function OrderStatusBadge(status) {
     label,
   )}</span>`;
 }
+
+export function StarRatingDisplay(average, count) {
+  const value = Number(average) || 0;
+  const rounded = Math.round(value);
+  const stars = Array.from({ length: 5 }, (_, i) =>
+    `<span class="star ${i < rounded ? "filled" : ""}">★</span>`,
+  ).join("");
+  const label =
+    count > 0
+      ? `${value.toFixed(1)} (${count})`
+      : "Belum ada rating";
+  return `<span class="star-rating"><span class="star-row">${stars}</span><span class="star-label">${escapeHtml(
+    label,
+  )}</span></span>`;
+}
+
+export function StarRatingInput(productId, current) {
+  const value = Number(current) || 0;
+  const stars = Array.from({ length: 5 }, (_, i) => {
+    const score = i + 1;
+    return `<button type="button" class="star-btn ${
+      score <= value ? "filled" : ""
+    }" data-rate="${escapeHtml(productId)}" data-score="${score}" aria-label="${score} bintang">★</button>`;
+  }).join("");
+  return `<span class="star-input" data-rate-group="${escapeHtml(
+    productId,
+  )}">${stars}</span>`;
+}
+

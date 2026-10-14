@@ -2,6 +2,27 @@ import { AsyncHandler } from "../middleware/AsyncHandler.js";
 import { HttpError } from "../utils/HttpError.js";
 import { prisma } from "../prisma.js";
 
+async function AttachRatings(products) {
+  const list = Array.isArray(products) ? products : [products];
+  const ids = list.map((product) => product.Id);
+  if (ids.length === 0) return products;
+
+  const grouped = await prisma.review.groupBy({
+    by: ["ProductId"],
+    where: { ProductId: { in: ids } },
+    _avg: { Rating: true },
+    _count: { Rating: true },
+  });
+  const map = new Map(grouped.map((row) => [row.ProductId, row]));
+
+  for (const product of list) {
+    const row = map.get(product.Id);
+    product.RatingAverage = row?._avg.Rating ?? 0;
+    product.RatingCount = row?._count.Rating ?? 0;
+  }
+  return products;
+}
+
 export const GetProducts = AsyncHandler(async (req, res) => {
   const { StoreId, CategoryId, IsAvailable } = req.query;
   const where = {};
@@ -16,6 +37,7 @@ export const GetProducts = AsyncHandler(async (req, res) => {
     include: { Store: true, Category: true },
     orderBy: { CreatedAt: "desc" },
   });
+  await AttachRatings(products);
   res.json(products);
 });
 
@@ -25,6 +47,7 @@ export const GetProduct = AsyncHandler(async (req, res) => {
     include: { Store: true, Category: true },
   });
   if (!product) throw new HttpError(404, "Produk tidak ditemukan.");
+  await AttachRatings(product);
   res.json(product);
 });
 

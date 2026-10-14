@@ -1,7 +1,7 @@
 import { FormatRupiah } from "@kampus-bite/shared";
 import { ApiClient } from "../api.js";
 import { Cart } from "../cart.js";
-import { escapeHtml } from "../dom.js";
+import { escapeHtml, StarRatingDisplay } from "../dom.js";
 import { openCheckoutModal } from "./checkoutModal.js";
 
 export async function renderCatalog(container) {
@@ -157,6 +157,7 @@ export async function renderCatalog(container) {
                   )}</p>`
                 : ""
             }
+            ${StarRatingDisplay(product.RatingAverage, product.RatingCount)}
             <p class="product-price">${FormatRupiah(product.Price)}</p>
             <button type="button" class="btn btn-block" style="margin-top:0.75rem" data-add="${escapeHtml(
               product.Id,

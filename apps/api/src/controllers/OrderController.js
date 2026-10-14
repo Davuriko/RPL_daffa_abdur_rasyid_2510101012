@@ -136,6 +136,38 @@ export const GetCustomerOrders = AsyncHandler(async (req, res) => {
   const orders = candidates.filter(
     (order) => NormalizeWhatsapp(order.CustomerWhatsapp) === normalized,
   );
+
+  const productIds = [
+    ...new Set(
+      orders.flatMap((order) => order.Items.map((item) => item.ProductId)),
+    ),
+  ];
+  if (productIds.length > 0) {
+    const [myReviews, summaries] = await Promise.all([
+      prisma.review.findMany({
+        where: { ProductId: { in: productIds }, CustomerWhatsapp: normalized },
+      }),
+      prisma.review.groupBy({
+        by: ["ProductId"],
+        where: { ProductId: { in: productIds } },
+        _avg: { Rating: true },
+        _count: { Rating: true },
+      }),
+    ]);
+    const myMap = new Map(myReviews.map((r) => [r.ProductId, r.Rating]));
+    const summaryMap = new Map(summaries.map((row) => [row.ProductId, row]));
+
+    for (const order of orders) {
+      for (const item of order.Items) {
+        if (!item.Product) continue;
+        const summary = summaryMap.get(item.ProductId);
+        item.Product.MyRating = myMap.get(item.ProductId) ?? 0;
+        item.Product.RatingAverage = summary?._avg.Rating ?? 0;
+        item.Product.RatingCount = summary?._count.Rating ?? 0;
+      }
+    }
+  }
+
   res.json(orders);
 });
 

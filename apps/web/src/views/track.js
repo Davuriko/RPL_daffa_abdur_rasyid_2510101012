@@ -1,6 +1,6 @@
 import { FormatRupiah } from "@kampus-bite/shared";
 import { ApiClient } from "../api.js";
-import { escapeHtml, OrderStatusBadge } from "../dom.js";
+import { escapeHtml, OrderStatusBadge, StarRatingInput } from "../dom.js";
 
 export function renderTrack(container) {
   let whatsapp = localStorage.getItem("KampusBiteWhatsapp") ?? "";
@@ -50,16 +50,34 @@ export function renderTrack(container) {
       <div class="stack-sm" style="margin-top:1.25rem">
         ${orders.map(orderCard).join("")}
       </div>`;
+
+    attachRatingHandlers();
   }
 
   function orderCard(order) {
     const items = (order.Items ?? [])
-      .map(
-        (item) =>
-          `<li>${item.Quantity}x ${escapeHtml(
-            item.Product?.Name ?? "Produk",
-          )} — ${FormatRupiah(item.Subtotal)}</li>`,
-      )
+      .map((item) => {
+        const name = escapeHtml(item.Product?.Name ?? "Produk");
+        const avg = Number(item.Product?.RatingAverage) || 0;
+        const count = Number(item.Product?.RatingCount) || 0;
+        const avgText =
+          count > 0 ? `Rata-rata ${avg.toFixed(1)} ★ (${count})` : "Belum ada rating";
+        const rater = item.ProductId
+          ? `<div class="order-item-rate">
+              <span class="rate-label">Beri rating:</span>
+              ${StarRatingInput(item.ProductId, item.Product?.MyRating ?? 0)}
+              <span class="rate-avg">${escapeHtml(avgText)}</span>
+            </div>`
+          : "";
+        return `
+          <li class="order-item-row">
+            <div class="order-item-main">
+              <span>${item.Quantity}x ${name}</span>
+              <span>${FormatRupiah(item.Subtotal)}</span>
+            </div>
+            ${rater}
+          </li>`;
+      })
       .join("");
 
     return `
@@ -79,6 +97,50 @@ export function renderTrack(container) {
           <span class="order-total">${FormatRupiah(order.TotalPrice)}</span>
         </div>
       </div>`;
+  }
+
+  function attachRatingHandlers() {
+    const el = container.querySelector("#track-results");
+    if (!el) return;
+    el.querySelectorAll("[data-rate]").forEach((btn) =>
+      btn.addEventListener("click", () => submitRating(btn)),
+    );
+  }
+
+  async function submitRating(btn) {
+    const productId = btn.dataset.rate;
+    const score = Number(btn.dataset.score);
+    const group = btn.closest("[data-rate-group]");
+    if (group) {
+      group.querySelectorAll(".star-btn").forEach((star, index) =>
+        star.classList.toggle("filled", index < score),
+      );
+    }
+    try {
+      const result = await ApiClient.CreateReview({
+        ProductId: productId,
+        CustomerWhatsapp: whatsapp.trim(),
+        Rating: score,
+      });
+      if (orders) {
+        for (const order of orders) {
+          for (const item of order.Items ?? []) {
+            if (item.ProductId !== productId || !item.Product) continue;
+            item.Product.MyRating = result.MyRating;
+            item.Product.RatingAverage = result.RatingAverage;
+            item.Product.RatingCount = result.RatingCount;
+          }
+        }
+      }
+      paintResults();
+    } catch (rateError) {
+      window.alert(
+        rateError instanceof Error
+          ? rateError.message
+          : "Gagal menyimpan rating.",
+      );
+      paintResults();
+    }
   }
 
   async function handleSubmit(event) {

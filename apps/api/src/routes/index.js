@@ -5,6 +5,7 @@ import { ProductRouter } from "./ProductRoutes.js";
 import { OrderRouter } from "./OrderRoutes.js";
 import { AuthRouter } from "./AuthRoutes.js";
 import { AdminRouter } from "./AdminRoutes.js";
+import { ReviewRouter } from "./ReviewRoutes.js";
 
 export const ApiRouter = Router();
 
@@ -14,3 +15,4 @@ ApiRouter.use("/stores", StoreRouter);
 ApiRouter.use("/categories", CategoryRouter);
 ApiRouter.use("/products", ProductRouter);
 ApiRouter.use("/orders", OrderRouter);
+ApiRouter.use("/reviews", ReviewRouter);

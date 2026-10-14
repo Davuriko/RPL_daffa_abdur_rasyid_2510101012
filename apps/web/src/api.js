@@ -78,5 +78,8 @@ export const ApiClient = {
       body: JSON.stringify({ Status: status }),
     }),
 
+  CreateReview: (body) =>
+    Request("/reviews", { method: "POST", body: JSON.stringify(body) }),
+
   GetDashboard: (storeId) => Request(`/stores/${storeId}/dashboard`),
 };
