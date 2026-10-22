@@ -27,13 +27,12 @@ export function OrderStatusBadge(status) {
 export function StarRatingDisplay(average, count) {
   const value = Number(average) || 0;
   const rounded = Math.round(value);
-  const stars = Array.from({ length: 5 }, (_, i) =>
-    `<span class="star ${i < rounded ? "filled" : ""}">★</span>`,
+  const stars = Array.from(
+    { length: 5 },
+    (_, i) => `<span class="star ${i < rounded ? "filled" : ""}">★</span>`,
   ).join("");
   const label =
-    count > 0
-      ? `${value.toFixed(1)} (${count})`
-      : "Belum ada rating";
+    count > 0 ? `${value.toFixed(1)} (${count})` : "Belum ada rating";
   return `<span class="star-rating"><span class="star-row">${stars}</span><span class="star-label">${escapeHtml(
     label,
   )}</span></span>`;
@@ -51,4 +50,3 @@ export function StarRatingInput(productId, current) {
     productId,
   )}">${stars}</span>`;
 }
-

@@ -61,7 +61,9 @@ export function renderTrack(container) {
         const avg = Number(item.Product?.RatingAverage) || 0;
         const count = Number(item.Product?.RatingCount) || 0;
         const avgText =
-          count > 0 ? `Rata-rata ${avg.toFixed(1)} ★ (${count})` : "Belum ada rating";
+          count > 0
+            ? `Rata-rata ${avg.toFixed(1)} ★ (${count})`
+            : "Belum ada rating";
         const rater = item.ProductId
           ? `<div class="order-item-rate">
               <span class="rate-label">Beri rating:</span>
@@ -112,9 +114,11 @@ export function renderTrack(container) {
     const score = Number(btn.dataset.score);
     const group = btn.closest("[data-rate-group]");
     if (group) {
-      group.querySelectorAll(".star-btn").forEach((star, index) =>
-        star.classList.toggle("filled", index < score),
-      );
+      group
+        .querySelectorAll(".star-btn")
+        .forEach((star, index) =>
+          star.classList.toggle("filled", index < score),
+        );
     }
     try {
       const result = await ApiClient.CreateReview({

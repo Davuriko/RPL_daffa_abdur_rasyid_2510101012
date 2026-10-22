@@ -14,7 +14,10 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "prisma:migrate": "npm run prisma:migrate --workspace @kampus-bite/api",
-    "prisma:seed": "npm run prisma:seed --workspace @kampus-bite/api"
+    "prisma:seed": "npm run prisma:seed --workspace @kampus-bite/api",
+    "test": "npm run test --workspace @kampus-bite/shared && npm run test --workspace @kampus-bite/api",
+    "test:api": "npm run test --workspace @kampus-bite/api",
+    "test:shared": "npm run test --workspace @kampus-bite/shared"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
