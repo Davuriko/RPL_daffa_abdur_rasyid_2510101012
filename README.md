@@ -141,3 +141,41 @@ Setelah itu buka browser:
 - **Port 3306 sudah dipakai:** matikan service MySQL lokal (mis. XAMPP) sebelum `npm run db:up`.
 - **Web tidak bisa akses API / error koneksi:** pastikan API jalan di port `4000` dan `apps/web/.env` berisi `VITE_API_URL="http://localhost:4000/api"`.
 - **Error Prisma Client:** jalankan `npm run prisma:generate --workspace @kampus-bite/api` lalu ulangi.
+
+---
+
+## 8. Cara Menjalankan Test
+
+Test menggunakan **Vitest**. Prisma di-mock sehingga **tidak perlu database atau Docker** untuk menjalankannya.
+
+### Jalankan Semua Test
+
+Dari folder root proyek (`KampusBite`):
+
+```powershell
+npm test
+```
+
+Perintah ini menjalankan test untuk workspace `shared` lalu `api` secara berurutan.
+
+### Jalankan Test per Bagian
+
+```powershell
+npm run test:api      # hanya test backend (apps/api)
+npm run test:shared   # hanya test shared (packages/shared)
+```
+
+### Mode Watch (otomatis re-run saat file berubah)
+
+```powershell
+npm run test:watch --workspace @kampus-bite/api
+npm run test:watch --workspace @kampus-bite/shared
+```
+
+### Menjalankan Satu File Test
+
+```powershell
+npm run test --workspace @kampus-bite/api -- tests/admin.test.js
+```
+
+> Semua test API ada di `apps/api/tests/` dan test shared ada di `packages/shared/tests/`.
