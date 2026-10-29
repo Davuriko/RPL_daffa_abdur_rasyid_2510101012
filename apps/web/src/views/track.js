@@ -148,7 +148,7 @@ export function renderTrack(container) {
   }
 
   async function handleSubmit(event) {
-    event.preventDefault();
+    if (event?.preventDefault) event.preventDefault();
     error = null;
     if (!whatsapp.trim()) {
       error = "Masukkan nomor WhatsApp yang dipakai saat memesan.";
@@ -173,4 +173,7 @@ export function renderTrack(container) {
   }
 
   render();
+  if (whatsapp.trim()) {
+    void handleSubmit();
+  }
 }

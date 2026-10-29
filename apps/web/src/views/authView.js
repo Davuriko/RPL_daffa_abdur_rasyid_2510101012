@@ -75,6 +75,7 @@ export function renderAuth(container, onSuccess) {
               ? `<p class="muted" style="margin:0">Akun demo admin: <b>admin@kampusbite.id</b> / <b>admin123</b></p>`
               : ""
           }
+          <a href="?view=customer" class="btn btn-ghost btn-block" style="text-align:center;text-decoration:none;margin-top:0.5rem">← Kembali ke Katalog</a>
         </div>
       </div>`;
 

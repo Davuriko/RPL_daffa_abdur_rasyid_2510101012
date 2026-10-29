@@ -9,8 +9,8 @@ export function openCheckoutModal(onClose) {
   document.body.appendChild(overlay);
 
   const form = {
-    customerName: "",
-    customerWhatsapp: "",
+    customerName: localStorage.getItem("KampusBiteCustomerName") || "",
+    customerWhatsapp: localStorage.getItem("KampusBiteWhatsapp") || "",
     deliveryLocation: "",
     notes: "",
   };
@@ -187,6 +187,7 @@ export function openCheckoutModal(onClose) {
         })),
       });
       localStorage.setItem("KampusBiteWhatsapp", form.customerWhatsapp.trim());
+      localStorage.setItem("KampusBiteCustomerName", form.customerName.trim());
     } catch (submitError) {
       error =
         submitError instanceof Error

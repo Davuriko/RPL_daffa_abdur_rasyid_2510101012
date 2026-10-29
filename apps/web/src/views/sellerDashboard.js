@@ -120,7 +120,7 @@ export function renderSellerDashboard(container, storeId) {
             <h2 class="section-title" style="margin:0">${escapeHtml(
               data.Store.Name,
             )}</h2>
-            <p class="muted">${escapeHtml(data.Store.CampusLocation)}</p>
+            <p class="muted">${escapeHtml(data.Store.CampusLocation)} · <span class="store-state ${data.Store.IsVerified ? "open" : "closed"}">${data.Store.IsVerified ? "Terverifikasi Admin" : "Menunggu Verifikasi"}</span></p>
           </div>
           <button type="button" class="btn btn-lg ${
             data.Store.IsOpen ? "btn-green" : "btn-red"

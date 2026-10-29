@@ -23,8 +23,8 @@ function defaultViewForRole(role) {
 }
 
 function allowedViewsForRole(role) {
-  if (role === Role.Admin) return ["admin"];
-  if (role === Role.Seller) return ["seller"];
+  if (role === Role.Admin) return ["admin", "customer"];
+  if (role === Role.Seller) return ["seller", "customer"];
   return ["customer"];
 }
 

@@ -128,7 +128,11 @@ export function renderAdmin(container) {
               <thead>
                 <tr><th>Nama</th><th>Email</th><th>Peran</th></tr>
               </thead>
-              <tbody>${users.map(userRow).join("")}</tbody>
+              <tbody>${
+                users.length === 0
+                  ? '<tr><td colspan="3" class="muted center" style="padding:1.5rem 0">Belum ada pengguna.</td></tr>'
+                  : users.map(userRow).join("")
+              }</tbody>
             </table>
           </div>
         </div>

@@ -140,13 +140,19 @@ export async function renderCatalog(container) {
     grid.innerHTML = list
       .map((product) => {
         const available = product.IsAvailable;
+        const storeOpen = product.Store ? product.Store.IsOpen : true;
+        const canOrder = available && storeOpen;
+        let buttonText = "Tambah ke Keranjang";
+        if (!available) buttonText = "Stok Habis";
+        else if (!storeOpen) buttonText = "Toko Tutup";
+
         return `
         <div class="product-card">
           <div class="product-media">
             <img src="${escapeHtml(product.ImageUrl)}" alt="${escapeHtml(
               product.Name,
             )}" loading="lazy" />
-            ${!available ? `<span class="sold-out">Habis</span>` : ""}
+            ${!available ? `<span class="sold-out">Habis</span>` : !storeOpen ? `<span class="sold-out" style="background:var(--red-600)">Toko Tutup</span>` : ""}
           </div>
           <div class="product-body">
             <h3 class="product-title">${escapeHtml(product.Name)}</h3>
@@ -161,9 +167,7 @@ export async function renderCatalog(container) {
             <p class="product-price">${FormatRupiah(product.Price)}</p>
             <button type="button" class="btn btn-block" style="margin-top:0.75rem" data-add="${escapeHtml(
               product.Id,
-            )}" ${available ? "" : "disabled"}>${
-              available ? "Tambah ke Keranjang" : "Tidak Tersedia"
-            }</button>
+            )}" ${canOrder ? "" : "disabled"}>${buttonText}</button>
           </div>
         </div>`;
       })
