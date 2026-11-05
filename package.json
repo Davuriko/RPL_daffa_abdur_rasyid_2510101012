@@ -17,7 +17,9 @@
     "prisma:seed": "npm run prisma:seed --workspace @kampus-bite/api",
     "test": "npm run test --workspace @kampus-bite/shared && npm run test --workspace @kampus-bite/api",
     "test:api": "npm run test --workspace @kampus-bite/api",
-    "test:shared": "npm run test --workspace @kampus-bite/shared"
+    "test:shared": "npm run test --workspace @kampus-bite/shared",
+    "build": "npm run build --workspace @kampus-bite/web",
+    "start": "npm run start --workspace @kampus-bite/api"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
